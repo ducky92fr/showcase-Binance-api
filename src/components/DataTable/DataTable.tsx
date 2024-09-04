@@ -5,27 +5,32 @@ import "./DataTable.css";
 interface TableDataProps extends ComponentProps {
   columns: GridColDef[];
   rows: GridRowsProp;
+  label: string;
 }
 export const DataTable = ({
   rows,
   columns,
   dataTestId = TEST_ID_DATA_GRID,
+  label,
 }: TableDataProps) => {
   return (
-    <table className="data-table">
-      <caption className="caption">Recent Trades</caption>
-      <tbody>
-        <DataGrid
-          data-testid={dataTestId}
-          density="compact"
-          disableColumnResize
-          disableColumnSelector
-          disableRowSelectionOnClick
-          disableColumnMenu
-          rows={rows}
-          columns={columns}
-        />
-      </tbody>
-    </table>
+    <div className="data-table">
+      <div className="caption">{label}</div>
+      <DataGrid
+        initialState={{
+          pagination: {
+            paginationModel: { pageSize: 20 },
+          },
+        }}
+        data-testid={dataTestId}
+        density="compact"
+        disableColumnResize
+        disableColumnSelector
+        disableRowSelectionOnClick
+        disableColumnMenu
+        rows={rows}
+        columns={columns}
+      />
+    </div>
   );
 };

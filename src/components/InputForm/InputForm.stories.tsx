@@ -11,13 +11,17 @@ const meta: Meta<typeof InputFormComponent> = {
   title: "Component/Input",
   component: InputFormComponent,
   args: {
-    currencySymbols: mockData,
+    options: mockData,
     variant: VariantInput.FILLED,
     onChange: fn(),
   },
   argTypes: {
     variant: {
       options: variantOptions,
+      control: "radio",
+    },
+    isDisabled: {
+      option: [true, false],
       control: "radio",
     },
   },

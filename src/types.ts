@@ -17,3 +17,8 @@ export enum VariantInput {
 export interface ComponentProps {
   dataTestId?: string;
 }
+
+export type Option = {
+  value: string | number;
+  label: string;
+};

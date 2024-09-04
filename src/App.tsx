@@ -3,19 +3,58 @@ import { Button } from "./components/Button/Button";
 import { InputForm } from "./components/InputForm/InputForm";
 import { SnackBar, SnackBarOnClose } from "./components/SnackBar/SnackBar";
 import "./App.css";
-
+import { useQuery } from "@tanstack/react-query";
 import { DataTableContainer } from "./components/DataTable/DataTableContainer";
-import { mockProps } from "./components/Table/contants";
+
 import { Table } from "./components/Table/Table";
+import {
+  fetchRecentTrades,
+  fetchSymbols,
+  fetchTicker,
+  fetchTicker24h,
+} from "./utils";
+import { useState } from "react";
+import { Option } from "./types";
 
 function App() {
-  const onChange = () => {};
-  const onClick = () => {};
-  const mockData = [
-    { symbol: "ETH/BTC" },
-    { symbol: "BNB/BTC" },
-    { symbol: "NEO/BTC" },
-  ];
+  const [symbolSelected, setSymbol] = useState("");
+
+  const {
+    data: symbols,
+    error,
+    isLoading,
+  } = useQuery({ queryKey: ["symbols"], queryFn: fetchSymbols });
+
+  const { data: tickerData, refetch } = useQuery({
+    queryKey: ["ticker"],
+    queryFn: () => fetchTicker(symbolSelected),
+    enabled: false,
+  });
+
+  const { data: tickerData24h, refetch: refetch24h } = useQuery({
+    queryKey: ["ticker24h"],
+    queryFn: () => fetchTicker24h(symbolSelected),
+    enabled: false,
+  });
+
+  const { data: recentTradeData, refetch: refetchRecentTrade } = useQuery({
+    queryKey: ["recentTrade"],
+    queryFn: () => fetchRecentTrades(symbolSelected),
+    enabled: false,
+  });
+
+  const onChange = (_: React.SyntheticEvent, value: Option | null) => {
+    setSymbol(value?.value as string);
+  };
+
+  const handleFetch = () => {
+    if (symbolSelected) {
+      refetch();
+      refetch24h();
+      refetchRecentTrade();
+    }
+  };
+
   const onClose: SnackBarOnClose = () => {};
   return (
     <Grid container direction="column">
@@ -24,9 +63,6 @@ function App() {
       </Grid>
 
       <Grid container spacing={4} direction="column" alignItems="center">
-        <Grid>
-          <h3>Select a currency pair to view data</h3>
-        </Grid>
         <Grid
           container
           direction="row"
@@ -36,14 +72,20 @@ function App() {
         >
           <Grid size={8}>
             <InputForm
+              isDisabled={isLoading || !symbols}
               onChange={onChange}
-              currencySymbols={mockData}
+              options={symbols}
               label="Select your currency pair"
             />
           </Grid>
 
           <Grid>
-            <Button onClick={onClick} isLoading={false} label="Get" />
+            <Button
+              isDisabled={!symbolSelected}
+              onClick={handleFetch}
+              isLoading={isLoading}
+              label="Get"
+            />
           </Grid>
         </Grid>
         <Grid
@@ -52,20 +94,35 @@ function App() {
           justifyContent="space-between"
           size={12}
         >
-          <Grid size={{ xs: 12, md: 6 }}>
-            <DataTableContainer />
+          <Grid size={{ xs: 12, md: 8 }}>
+            {recentTradeData && (
+              <DataTableContainer
+                label="Recent Trades"
+                data={recentTradeData.map((el) => el.formattedValue())}
+              />
+            )}
           </Grid>
           <Grid container direction="column" size={{ xs: 12, md: 6 }}>
             <Grid>
-              <Table {...mockProps} />
+              {tickerData && (
+                <Table
+                  tableHeaderTitle="Market Data Ticker"
+                  rows={tickerData.formattedValue()}
+                />
+              )}
             </Grid>
             <Grid>
-              <Table {...mockProps} />
+              {tickerData24h && (
+                <Table
+                  tableHeaderTitle="Market Data Ticker 24h"
+                  rows={tickerData24h.formattedValue()}
+                />
+              )}
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-      <SnackBar isOpen={true} onClose={onClose} message="here" />
+      <SnackBar isOpen={!!error} onClose={onClose} message={error?.message} />
     </Grid>
   );
 }

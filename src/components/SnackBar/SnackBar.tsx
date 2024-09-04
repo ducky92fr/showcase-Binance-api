@@ -11,13 +11,13 @@ export type SnackBarOnClose = (
 
 interface SnackBarProps extends ComponentProps {
   isOpen: boolean;
-  message: string;
+  message?: string;
   onClose: SnackBarOnClose;
 }
 
 export const SnackBar = ({
   isOpen,
-  message,
+  message = "Something went wrong",
   onClose,
   dataTestId = TEST_ID_SNACK_BAR,
 }: SnackBarProps) => {

@@ -6,6 +6,7 @@ interface ButtonProps extends LoadingButtonProps, ComponentProps {
   label?: string;
   onClick: () => void;
   isLoading?: boolean;
+  isDisabled?: boolean;
 }
 
 export const Button = ({
@@ -15,9 +16,11 @@ export const Button = ({
   onClick,
   dataTestId = TEST_ID_BUTTON_SUBMIT,
   isLoading = false,
+  isDisabled = false,
 }: ButtonProps) => {
   return (
     <LoadingButton
+      disabled={isDisabled}
       data-testid={dataTestId}
       onClick={onClick}
       size={size}
