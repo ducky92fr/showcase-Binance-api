@@ -1,0 +1,9 @@
+.caption {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.data-table {
+  border: 1px solid #ddd;
+  width: 100%;
+}

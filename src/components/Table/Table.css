@@ -1,0 +1,32 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+  border: 1px solid #ddd;
+}
+
+.row {
+  font-weight: "500";
+  border: 1px solid #ddd;
+}
+
+.caption {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.row-label {
+  padding: 3px 5px 3px 5px;
+  border-right: 1px solid #ddd;
+  text-align: left;
+}
+.row-value {
+  padding: 3px 5px 3px 5px;
+  text-align: right;
+}
+.negative {
+  color: red;
+}
+.positive {
+  color: rgb(73, 139, 2);
+}
