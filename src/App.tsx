@@ -1,129 +1,107 @@
-import Grid from "@mui/material/Grid2";
 import { Button } from "./components/Button/Button";
 import { InputForm } from "./components/InputForm/InputForm";
 import { SnackBar, SnackBarOnClose } from "./components/SnackBar/SnackBar";
 import "./App.css";
-import { useQuery } from "@tanstack/react-query";
+
 import { DataTableContainer } from "./components/DataTable/DataTableContainer";
 
 import { Table } from "./components/Table/Table";
-import {
-  fetchRecentTrades,
-  fetchSymbols,
-  fetchTicker,
-  fetchTicker24h,
-} from "./utils";
+
 import { useState } from "react";
 import { Option } from "./types";
+import {
+  useFetchSymbols,
+  useFetchTicker,
+  useFetchTicker24h,
+  useFetchRecentTrade,
+} from "./components/hooks/useFetch";
 
 function App() {
   const [symbolSelected, setSymbol] = useState("");
 
+  const { symbols, errorFetchSymbols, isLoadingFetchSymbols } =
+    useFetchSymbols();
+
+  const { dataTicker, errorFetchTicker, isLoadingTicker, fetchTicker } =
+    useFetchTicker(symbolSelected);
+
   const {
-    data: symbols,
-    error,
-    isLoading,
-  } = useQuery({ queryKey: ["symbols"], queryFn: fetchSymbols });
+    dataTicker24h,
+    errorFetchTicker24h,
+    isLoadingTicker24h,
+    fetchTicker24h,
+  } = useFetchTicker24h(symbolSelected);
 
-  const { data: tickerData, refetch } = useQuery({
-    queryKey: ["ticker"],
-    queryFn: () => fetchTicker(symbolSelected),
-    enabled: false,
-  });
+  const {
+    recentTradeData,
+    errorFetchRecentTrade,
+    isLoadingFetchRecentTrade,
+    fetchRecentTrade,
+  } = useFetchRecentTrade(symbolSelected);
 
-  const { data: tickerData24h, refetch: refetch24h } = useQuery({
-    queryKey: ["ticker24h"],
-    queryFn: () => fetchTicker24h(symbolSelected),
-    enabled: false,
-  });
-
-  const { data: recentTradeData, refetch: refetchRecentTrade } = useQuery({
-    queryKey: ["recentTrade"],
-    queryFn: () => fetchRecentTrades(symbolSelected),
-    enabled: false,
-  });
+  const error =
+    errorFetchSymbols ||
+    errorFetchRecentTrade ||
+    errorFetchTicker24h ||
+    errorFetchTicker;
 
   const onChange = (_: React.SyntheticEvent, value: Option | null) => {
     setSymbol(value?.value as string);
   };
 
-  const handleFetch = () => {
+  const onClick = () => {
     if (symbolSelected) {
-      refetch();
-      refetch24h();
-      refetchRecentTrade();
+      fetchTicker();
+      fetchTicker24h();
+      fetchRecentTrade();
     }
   };
 
   const onClose: SnackBarOnClose = () => {};
   return (
-    <Grid container direction="column">
-      <Grid display="flex" justifyContent="center">
-        <h1>Binance Market Data</h1>
-      </Grid>
-
-      <Grid container spacing={4} direction="column" alignItems="center">
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-          size={8}
-        >
-          <Grid size={8}>
-            <InputForm
-              isDisabled={isLoading || !symbols}
-              onChange={onChange}
-              options={symbols}
-              label="Select your currency pair"
+    <div className="main-app">
+      <h1>Binance Market Data</h1>
+      <div className="input-section">
+        <InputForm
+          isDisabled={isLoadingFetchSymbols || !symbols}
+          onChange={onChange}
+          options={symbols?.map((symbol) => symbol.formattedValue())}
+          label="Select your currency pair"
+        />
+        <Button
+          isDisabled={!symbolSelected}
+          onClick={onClick}
+          isLoading={isLoadingFetchSymbols}
+          label="Get"
+        />
+      </div>
+      <div className="table-section">
+        <div className="left-section">
+          {recentTradeData && (
+            <DataTableContainer
+              label="Recent Trades"
+              data={recentTradeData.map((el) => el.formattedValue())}
             />
-          </Grid>
-
-          <Grid>
-            <Button
-              isDisabled={!symbolSelected}
-              onClick={handleFetch}
-              isLoading={isLoading}
-              label="Get"
+          )}
+        </div>
+        <div className="right-section">
+          {dataTicker && (
+            <Table
+              tableHeaderTitle="Market Data Ticker"
+              rows={dataTicker.formattedValue()}
             />
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          direction="row"
-          justifyContent="space-between"
-          size={12}
-        >
-          <Grid size={{ xs: 12, md: 8 }}>
-            {recentTradeData && (
-              <DataTableContainer
-                label="Recent Trades"
-                data={recentTradeData.map((el) => el.formattedValue())}
-              />
-            )}
-          </Grid>
-          <Grid container direction="column" size={{ xs: 12, md: 6 }}>
-            <Grid>
-              {tickerData && (
-                <Table
-                  tableHeaderTitle="Market Data Ticker"
-                  rows={tickerData.formattedValue()}
-                />
-              )}
-            </Grid>
-            <Grid>
-              {tickerData24h && (
-                <Table
-                  tableHeaderTitle="Market Data Ticker 24h"
-                  rows={tickerData24h.formattedValue()}
-                />
-              )}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+          )}
+          {dataTicker24h && (
+            <Table
+              tableHeaderTitle="Market Data Ticker 24h"
+              rows={dataTicker24h.formattedValue()}
+            />
+          )}
+        </div>
+      </div>
+
       <SnackBar isOpen={!!error} onClose={onClose} message={error?.message} />
-    </Grid>
+    </div>
   );
 }
 

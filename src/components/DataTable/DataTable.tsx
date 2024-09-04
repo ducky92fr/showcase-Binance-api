@@ -30,6 +30,7 @@ export const DataTable = ({
         disableColumnMenu
         rows={rows}
         columns={columns}
+        pageSizeOptions={[20]}
       />
     </div>
   );

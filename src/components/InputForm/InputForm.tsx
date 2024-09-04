@@ -3,7 +3,7 @@ import { ComponentProps, VariantInput, Option } from "../../types";
 import { TEST_ID_AUTOCOMPLETE_INPUT } from "./constants";
 
 interface InputFormProps extends BaseTextFieldProps, ComponentProps {
-  options: { label: string; value: string | number }[];
+  options?: { label: string; value: string | number }[];
   variant?: VariantInput;
   onChange: (_: React.SyntheticEvent, value: Option | null) => void;
   label?: string;

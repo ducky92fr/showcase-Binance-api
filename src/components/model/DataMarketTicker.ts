@@ -1,4 +1,4 @@
-type TickerData = {
+export type TickerData = {
   closeTime: number;
   count: number;
   firstId: number;
