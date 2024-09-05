@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { BinanceApi } from "../API/binanceApi";
+import { BinanceApi } from "../API/BinanceApi";
 
 const api = new BinanceApi();
 
@@ -33,6 +33,7 @@ export const useFetchTicker = (symbol: string) => {
     queryKey: ["ticker", symbol],
     queryFn: () => api.fetchTicker(symbol),
     enabled: false,
+    networkMode: "always",
   });
 
   return {
@@ -55,6 +56,7 @@ export const useFetchTicker24h = (symbol: string) => {
     queryKey: ["ticker24h", symbol],
     queryFn: () => api.fetchTicker24h(symbol),
     enabled: false,
+    networkMode: "always",
   });
 
   return {
@@ -77,6 +79,7 @@ export const useFetchRecentTrade = (symbol: string) => {
     queryKey: ["recentTrade", symbol],
     queryFn: () => api.fetchRecentTrades(symbol),
     enabled: false,
+    networkMode: "always",
   });
 
   return {

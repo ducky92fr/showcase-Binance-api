@@ -1,7 +1,9 @@
+import axios, { AxiosResponse } from "axios";
 import { BinanceSymbol, CurrencyPair } from "../model/CurrencyPair";
 import { DataMarketTicker24h, Ticker24hData } from "../model/DataMarket24h";
 import { DataMarketTicker, TickerData } from "../model/DataMarketTicker";
 import { DataRecentTrade, RecentTradeData } from "../model/DataRecentTrade";
+import { ErrorHandling } from "../model/ErrorHandling";
 
 const BASE_URL_BINANCE_API = "https://api.binance.com/api/v3";
 const EXCHANGE_INFO = "/exchangeInfo";
@@ -18,42 +20,49 @@ export class BinanceApi {
   private async fetch<T>(
     endpoint: string,
     queryParams?: Record<string, string>
-  ): Promise<T> {
-    const queryStr = new URLSearchParams(queryParams).toString();
-    const url = `${this.baseUrl}${endpoint}${queryStr ? `?${queryStr}` : ""}`;
+  ): Promise<AxiosResponse<T>> {
+    try {
+      const queryStr = new URLSearchParams(queryParams).toString();
+      const url = `${this.baseUrl}${endpoint}${queryStr ? `?${queryStr}` : ""}`;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const response = await axios(url);
+      return response;
+    } catch (error) {
+      ErrorHandling.handle(error);
+      throw error;
     }
-    return await response.json();
   }
 
   public async fetchSymbols(): Promise<CurrencyPair[]> {
-    const data: { symbols: BinanceSymbol[] } = await this.fetch(EXCHANGE_INFO);
-    return data.symbols.map((symbol) => new CurrencyPair(symbol));
+    const response: AxiosResponse = await this.fetch(EXCHANGE_INFO);
+    return response.data.symbols.map(
+      (symbol: BinanceSymbol) => new CurrencyPair(symbol)
+    );
   }
 
   public async fetchTicker(symbol: string): Promise<DataMarketTicker> {
-    const data: TickerData = await this.fetch(TICKER_DATA, { symbol });
-    return new DataMarketTicker(data);
+    const response: AxiosResponse = await this.fetch(TICKER_DATA, { symbol });
+    const dataMarketTicker: TickerData = response.data;
+    return new DataMarketTicker(dataMarketTicker);
   }
 
   public async fetchTicker24h(symbol: string): Promise<DataMarketTicker24h> {
-    const data: Ticker24hData = await this.fetch(TICKER_DATA_24h, { symbol });
-    return new DataMarketTicker24h(data);
+    const response: AxiosResponse = await this.fetch(TICKER_DATA_24h, {
+      symbol,
+    });
+    const dataMarketTicker24h: Ticker24hData = response.data;
+    return new DataMarketTicker24h(dataMarketTicker24h);
   }
 
   public async fetchRecentTrades(
     symbol: string,
     limit: number = 500
   ): Promise<DataRecentTrade[]> {
-    const data: RecentTradeData[] = await this.fetch(RECENT_TRADE, {
+    const response: AxiosResponse = await this.fetch(RECENT_TRADE, {
       symbol,
       limit: limit.toString(),
     });
-
-    return data.map((trade) => new DataRecentTrade(trade));
+    const recentTrades: RecentTradeData[] = response.data;
+    return recentTrades.map((trade) => new DataRecentTrade(trade));
   }
 }

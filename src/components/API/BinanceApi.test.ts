@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { BinanceApi } from "./binanceApi";
-
 import {
   mockBinanceSymbols,
   mockRecentTradesResponse,
   mockTicker24hResponse,
   mockTickerResponse,
 } from "./constants";
+import { BinanceApi } from "./BinanceApi";
 
 const SYMBOL = "BTCUSDT";
 describe("BinanceApi", () => {
