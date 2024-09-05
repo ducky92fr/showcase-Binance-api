@@ -3,9 +3,9 @@ export type RecentTradeData = {
   price: string;
   qty: string;
   quoteQty: string;
-  time: string;
-  isBuyerMaker: string;
-  isBestMatch: string;
+  time: number;
+  isBuyerMaker: boolean;
+  isBestMatch: boolean;
 };
 
 export class DataRecentTrade {
@@ -13,9 +13,9 @@ export class DataRecentTrade {
   price: string;
   qty: string;
   quoteQty: string;
-  time: string;
-  isBuyerMaker: string;
-  isBestMatch: string;
+  time: number;
+  isBuyerMaker: boolean;
+  isBestMatch: boolean;
 
   constructor(props: RecentTradeData) {
     this.id = props.id;

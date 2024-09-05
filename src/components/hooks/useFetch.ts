@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { BinanceApi } from "../API/binance-api";
+import { BinanceApi } from "../API/binanceApi";
 
 const api = new BinanceApi();
 

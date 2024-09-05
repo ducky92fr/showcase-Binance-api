@@ -1,6 +1,6 @@
 import { Button } from "./components/Button/Button";
 import { InputForm } from "./components/InputForm/InputForm";
-import { SnackBar, SnackBarOnClose } from "./components/SnackBar/SnackBar";
+import { SnackBar } from "./components/SnackBar/SnackBar";
 import "./App.css";
 
 import { DataTableContainer } from "./components/DataTable/DataTableContainer";
@@ -18,26 +18,19 @@ import {
 
 function App() {
   const [symbolSelected, setSymbol] = useState("");
+  const [isSnackBarClosed, setSnackBarClosed] = useState(true);
 
   const { symbols, errorFetchSymbols, isLoadingFetchSymbols } =
     useFetchSymbols();
 
-  const { dataTicker, errorFetchTicker, isLoadingTicker, fetchTicker } =
+  const { dataTicker, errorFetchTicker, fetchTicker } =
     useFetchTicker(symbolSelected);
 
-  const {
-    dataTicker24h,
-    errorFetchTicker24h,
-    isLoadingTicker24h,
-    fetchTicker24h,
-  } = useFetchTicker24h(symbolSelected);
+  const { dataTicker24h, errorFetchTicker24h, fetchTicker24h } =
+    useFetchTicker24h(symbolSelected);
 
-  const {
-    recentTradeData,
-    errorFetchRecentTrade,
-    isLoadingFetchRecentTrade,
-    fetchRecentTrade,
-  } = useFetchRecentTrade(symbolSelected);
+  const { recentTradeData, errorFetchRecentTrade, fetchRecentTrade } =
+    useFetchRecentTrade(symbolSelected);
 
   const error =
     errorFetchSymbols ||
@@ -51,13 +44,16 @@ function App() {
 
   const onClick = () => {
     if (symbolSelected) {
+      fetchRecentTrade();
       fetchTicker();
       fetchTicker24h();
-      fetchRecentTrade();
     }
   };
 
-  const onClose: SnackBarOnClose = () => {};
+  const onClose = () => {
+    setSnackBarClosed(false);
+  };
+
   return (
     <div className="main-app">
       <h1>Binance Market Data</h1>
@@ -100,7 +96,11 @@ function App() {
         </div>
       </div>
 
-      <SnackBar isOpen={!!error} onClose={onClose} message={error?.message} />
+      <SnackBar
+        isOpen={isSnackBarClosed && !!error}
+        onClose={onClose}
+        message={error?.message}
+      />
     </div>
   );
 }
