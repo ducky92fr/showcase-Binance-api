@@ -14,7 +14,9 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", height: "400px" }}
+      >
         <Story />
       </div>
     ),
