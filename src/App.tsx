@@ -18,6 +18,7 @@ import {
 
 function App() {
   const [symbolSelected, setSymbol] = useState("");
+
   const [isSnackBarClosed, setSnackBarClosed] = useState(true);
 
   const { symbols, errorFetchSymbols, isLoadingFetchSymbols } =
@@ -32,12 +33,11 @@ function App() {
   const { recentTradeData, errorFetchRecentTrade, fetchRecentTrade } =
     useFetchRecentTrade(symbolSelected);
 
-  const error =
-    errorFetchSymbols ||
-    errorFetchRecentTrade ||
-    errorFetchTicker24h ||
-    errorFetchTicker;
-
+  const errorMessage =
+    errorFetchSymbols?.message ||
+    errorFetchRecentTrade?.message ||
+    errorFetchTicker24h?.message ||
+    errorFetchTicker?.message;
   const onChange = (_: React.SyntheticEvent, value: Option | null) => {
     setSymbol(value?.value as string);
   };
@@ -72,7 +72,7 @@ function App() {
         />
       </div>
       <div className="table-section">
-        <div className="left-section">
+        <div className="recent-trade">
           {recentTradeData && (
             <DataTableContainer
               label="Recent Trades"
@@ -97,9 +97,9 @@ function App() {
       </div>
 
       <SnackBar
-        isOpen={isSnackBarClosed && !!error}
+        isOpen={isSnackBarClosed && !!errorMessage}
         onClose={onClose}
-        message={error?.message}
+        message={errorMessage}
       />
     </div>
   );

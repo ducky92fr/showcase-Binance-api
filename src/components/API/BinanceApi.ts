@@ -25,7 +25,7 @@ export class BinanceApi {
       const queryStr = new URLSearchParams(queryParams).toString();
       const url = `${this.baseUrl}${endpoint}${queryStr ? `?${queryStr}` : ""}`;
 
-      const response = await axios(url);
+      const response = await axios.get(url);
       return response;
     } catch (error) {
       ErrorHandling.handle(error);

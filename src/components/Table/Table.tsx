@@ -1,8 +1,9 @@
 import { ComponentProps } from "../../types";
-import { TEST_ID_SNACK_BAR } from "./contants";
+
 import { conditionalStyling } from "./utils";
 
 import "./Table.css";
+import { TEST_ID_TABLE_VIEW } from "./contants";
 export type Row = { label: string; value: string | number };
 interface TableProps extends ComponentProps {
   tableHeaderTitle: string;
@@ -12,7 +13,7 @@ interface TableProps extends ComponentProps {
 export const Table = ({
   tableHeaderTitle,
   rows,
-  dataTestId = TEST_ID_SNACK_BAR,
+  dataTestId = TEST_ID_TABLE_VIEW,
 }: TableProps) => {
   return (
     <table className="table" data-testid={dataTestId}>

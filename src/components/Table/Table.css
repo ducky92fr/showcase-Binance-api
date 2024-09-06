@@ -16,12 +16,12 @@
 }
 
 .row-label {
-  padding: 3px 5px 3px 5px;
+  padding: 3px 5px 3px 10px;
   border-right: 1px solid #ddd;
   text-align: left;
 }
 .row-value {
-  padding: 3px 5px 3px 5px;
+  padding: 3px 10px 3px 5px;
   text-align: right;
 }
 .negative {

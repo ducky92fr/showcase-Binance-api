@@ -30,7 +30,7 @@ export const useFetchTicker = (symbol: string) => {
     refetch: fetchTicker,
     ...props
   } = useQuery({
-    queryKey: ["ticker", symbol],
+    queryKey: ["ticker"],
     queryFn: () => api.fetchTicker(symbol),
     enabled: false,
     networkMode: "always",
@@ -53,7 +53,7 @@ export const useFetchTicker24h = (symbol: string) => {
     refetch: fetchTicker24h,
     ...props
   } = useQuery({
-    queryKey: ["ticker24h", symbol],
+    queryKey: ["ticker24h"],
     queryFn: () => api.fetchTicker24h(symbol),
     enabled: false,
     networkMode: "always",
@@ -76,7 +76,7 @@ export const useFetchRecentTrade = (symbol: string) => {
     refetch: fetchRecentTrade,
     ...props
   } = useQuery({
-    queryKey: ["recentTrade", symbol],
+    queryKey: ["recentTrade"],
     queryFn: () => api.fetchRecentTrades(symbol),
     enabled: false,
     networkMode: "always",

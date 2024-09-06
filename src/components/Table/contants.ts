@@ -1,5 +1,5 @@
 //testID
-export const TEST_ID_SNACK_BAR = "table-view";
+export const TEST_ID_TABLE_VIEW = "table-view";
 
 //const
 export const CHANGE = "change";

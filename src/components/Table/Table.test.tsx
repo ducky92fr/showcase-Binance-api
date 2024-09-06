@@ -1,11 +1,11 @@
 import { render, screen } from "../../test/setupTest";
-import { mockProps, TEST_ID_SNACK_BAR } from "./contants";
+import { mockProps, TEST_ID_TABLE_VIEW } from "./contants";
 import { Table } from "./Table";
 
 describe("Table Component", () => {
   it("renders correctly with the provided data-testid", () => {
     render(<Table {...mockProps} />);
-    const table = screen.getByTestId(TEST_ID_SNACK_BAR);
+    const table = screen.getByTestId(TEST_ID_TABLE_VIEW);
 
     expect(table).toBeInTheDocument();
   });

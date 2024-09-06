@@ -37,6 +37,7 @@ export class ErrorHandling {
 
   private static handleUnknownError(error: unknown): void {
     console.error("An unexpected error", error);
+
     throw new Error("Something went wrong");
   }
 }
